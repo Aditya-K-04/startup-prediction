@@ -1,5 +1,5 @@
 # YouTube API Key
-YOUTUBE_API_KEY = "AIzaSyDKlso-z-ZxxBB2mfPBKoHRYO6ZLRPdq3A"
+YOUTUBE_API_KEY = 
 
 # Reddit API Credentials (we'll add these next)
 REDDIT_CLIENT_ID = "YOUR_CLIENT_ID"
