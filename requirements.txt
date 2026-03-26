@@ -11,4 +11,3 @@ textblob==0.17.1
 requests==2.31.0
 openpyxl==3.1.2
 python-dotenv==1.0.0
-AIzaSyDKlso-z-ZxxBB2mfPBKoHRYO6ZLRPdq3A
