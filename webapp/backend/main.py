@@ -18,7 +18,8 @@ from typing import Optional
 import json
 import xgboost as xgb
 
-BASE    = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+# Works both locally and on Render
+BASE    = os.path.dirname(os.path.abspath(__file__))
 MDL_DIR = os.path.join(BASE, "models")
 DATA    = os.path.join(BASE, "data", "integrated", "final_training_data.csv")
 
@@ -115,9 +116,29 @@ def load_models():
     with tempfile.NamedTemporaryFile(suffix='.json', delete=False) as tmp:
         tmp_path = tmp.name
     xgb_model.get_booster().save_model(tmp_path)
+    # Reload into fresh booster and fix base_score string bug
+    booster = xgb.Booster()
+    booster.load_model(tmp_path)
+    # Fix base_score: extract from config and set as float
+    import re as _re
+    cfg = booster.save_config()
+    cfg_json = json.loads(cfg)
+    try:
+        bs_raw = cfg_json['learner']['learner_model_param']['base_score']
+        bs_val = float(_re.sub(r'[\[\]]', '', str(bs_raw)))
+        cfg_json['learner']['learner_model_param']['base_score'] = str(bs_val)
+        booster.load_config(json.dumps(cfg_json))
+    except Exception:
+        pass
     CLEAN_XGB = xgb.XGBClassifier()
-    CLEAN_XGB.load_model(tmp_path)
+    CLEAN_XGB._Booster = booster
+    CLEAN_XGB.n_features_in_ = xgb_model.n_features_in_
+    # Save patched model and reload cleanly
+    booster.save_model(tmp_path)
+    CLEAN_XGB2 = xgb.XGBClassifier()
+    CLEAN_XGB2.load_model(tmp_path)
     os.unlink(tmp_path)
+    CLEAN_XGB = CLEAN_XGB2
     EXPLAINER = shap.TreeExplainer(CLEAN_XGB)
 
     # Feature names from training data
