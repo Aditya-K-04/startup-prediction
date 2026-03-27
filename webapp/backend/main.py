@@ -19,7 +19,9 @@ import json
 import xgboost as xgb
 
 # Works both locally and on Render
-BASE    = os.path.dirname(os.path.abspath(__file__))
+# main.py is at: project_root/webapp/backend/main.py
+# models/ is at:  project_root/models/
+BASE    = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 MDL_DIR = os.path.join(BASE, "models")
 DATA    = os.path.join(BASE, "data", "integrated", "final_training_data.csv")
 
