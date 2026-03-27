@@ -18,7 +18,7 @@ from typing import Optional
 import json
 import xgboost as xgb
 
-BASE    = r"C:\Users\chand\OneDrive\Desktop\7th sem\startup-prediction"
+BASE    = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 MDL_DIR = os.path.join(BASE, "models")
 DATA    = os.path.join(BASE, "data", "integrated", "final_training_data.csv")
 
